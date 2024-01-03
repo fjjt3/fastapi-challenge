@@ -2,7 +2,7 @@ from fastapi import FastAPI
 # from .import models
 from  models import models
 from database import engine
-from routers import movie, user, login
+from routers import login, movie, user
 
 app = FastAPI(
     title="Movies API",

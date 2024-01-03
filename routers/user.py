@@ -15,7 +15,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 @router.post('/', response_model=schemas.DisplayUser, status_code=status.HTTP_201_CREATED)
 def create_user(request: schemas.User, db: Session = Depends(get_db)):
     hashedpassword = pwd_context.hash(request.password)
-    new_user = models.User(username=request.username, email=request.email, password=hashedpassword)
+    new_user = models.User(username=request.username, password=hashedpassword)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
