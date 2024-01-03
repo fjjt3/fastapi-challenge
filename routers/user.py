@@ -2,7 +2,7 @@ from models import models, schemas
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
 from database import get_db
-from typing import List
+from routers.login import get_current_user
 from fastapi import APIRouter, Query, HTTPException, status
 from passlib.context import CryptContext
 
