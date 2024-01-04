@@ -1,11 +1,9 @@
 from models import models, schemas
-from models.schemas import User
-from routers.login import get_current_user
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
 from database import get_db
 from typing import List
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Header
 
 router =  APIRouter(tags=['Movies'],
                     prefix="/movie")
@@ -20,8 +18,7 @@ def get_movies(db: Session = Depends(get_db),
     return movies
 
 @router.get('/{title}', response_model=schemas.Movie)
-def get_movie_by_title(title: str, db: Session = Depends(get_db), 
-                    current_user: schemas.User = Depends(get_current_user)):
+def get_movie_by_title(title: str, db: Session = Depends(get_db)):
     movie = db.query(models.Movie).filter(models.Movie.title == title).first()
     return movie
 
@@ -33,7 +30,7 @@ def create_movie(movie: schemas.MovieCreate, db: Session = Depends(get_db)):
     db.refresh(db_movie)
     return db_movie
 
-@router.delete('/{imdbID}')
+""" @router.delete('/{imdbID}')
 def delete_movie(imdbID: str, db: Session = Depends(get_db)):
     movie = db.query(models.Movie).filter(models.Movie.imdbID == imdbID).first()
     if movie:
@@ -41,4 +38,18 @@ def delete_movie(imdbID: str, db: Session = Depends(get_db)):
         db.commit()
         return {"message": "Movie deleted successfully"}
     else:
+        raise HTTPException(status_code=404, detail="Movie not found") """
+
+@router.delete('/{imdbID}')
+def delete_movie(imdbID: str, authorization: str = Header(None), db: Session = Depends(get_db)):
+    if authorization != "12345":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    movie = db.query(models.Movie).filter(models.Movie.imdbID == imdbID).first()
+    if movie:
+        db.delete(movie)
+        db.commit()
+        return {"message": "Movie deleted successfully"}
+    else:
         raise HTTPException(status_code=404, detail="Movie not found")
+

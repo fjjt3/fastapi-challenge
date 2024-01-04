@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String
 from database import Base
 
 
@@ -8,10 +8,3 @@ class Movie(Base):
     title = Column(String)
     year = Column(String)
     poster = Column(String)
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String)
-    password = Column(String)
-    
